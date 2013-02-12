@@ -17,67 +17,51 @@ rule
              | expr              { val[0] }
              | /* empty */       { NULL }
 
-   multi_expr: multi_expr_x      {
-                 SExpr.new(Revo::Symbol.new('begin'))
-                      .cons!(val[0])
-               }
+   multi_expr: multi_expr_x      { Cons[:begin, val[0]] }
 
- multi_expr_x: expr expr         { SExpr.new(val[0]).cons!(SExpr.new(val[1])) }
-             | expr multi_expr_x { SExpr.new(val[0]).cons!(val[1]) }
+ multi_expr_x: expr expr         { Cons[val[0], val[1]] }
+             | expr multi_expr_x { Cons[val[0], val[1]] }
 
 
 
-      literal: STRING   { String.new(val[0]) }
-             | INTEGER  { Number.new(val[0]) }
-             | FLOAT    { Number.new(val[0]) }
-             | SYMBOL   { Symbol.new(val[0]) }
-             | BOOLEAN  { Bool.new(val[0]) }
+      literal: STRING
+             | CHARACTER
+             | INTEGER
+             | FLOAT
+             | SYMBOL
+             | BOOLEAN
 
-         expr: literal  { val[0] }
-             | list     { val[0] }
-             | pair     { val[0] }
-             | quoted_expr      { val[0] }
-             | quasiquote       { val[0] }
-             | unquote          { val[0] }
-             | unquote_splicing { val[0] }
+         expr: literal
+             | list
+             | pair
+             | quoted_expr
+             | quasiquote
+             | unquote
+             | unquote_splicing
 
          pair: LBRACKET pair_content RBRACKET { val[1] }
 
- pair_content: expr PERIOD expr {
-                 SExpr.new(val[0]).cons!(val[2])
-               }
-             | expr pair_content      {
-                 SExpr.new(val[0]).cons!(val[1])
-               }
+ pair_content: expr PERIOD expr  { Cons[val[0], val[2]] }
+             | expr pair_content { Cons[val[0], val[1]] }
 
          list: LBRACKET list_content RBRACKET  { val[1] }
 
 
  list_content: /* empty */       { NULL }
-             | expr list_content { SExpr.new(val[0]).cons!(val[1]) }
+             | expr list_content { Cons[val[0], val[1]] }
 
-  quoted_expr: QUOTE expr        {
-                 SExpr.new(Symbol.new('quote')).cons!(SExpr.new(val[1]))
-               }
+  quoted_expr: QUOTE expr        { Cons[:quote, val[1]] }
 
-   quasiquote: BACKQUOTE expr    {
-                 SExpr.new(Symbol.new('quasiquote')).cons!(SExpr.new(val[1]))
-               }
-      unquote: COMMA expr        {
-                 SExpr.new(Symbol.new('unquote')).cons!(SExpr.new(val[1]))
-               }
-unquote_splicing: COMMA_AT expr  {
-                 SExpr.new(Symbol.new('unquote-splicing'))
-                      .cons!(SExpr.new(val[1]))
-               }
+   quasiquote: BACKQUOTE expr    { Cons[:quasiquote, val[1]] }
+      unquote: COMMA expr        { Cons[:unquote, val[1]] }
+unquote_splicing: COMMA_AT expr  { Cons[:'unquote-splicing', val[1]] }
+
 
 
 
 ---- header
-require_relative 'prim_types'
-require_relative 'symbol'
-require_relative 'sexpr'
 require_relative 'scanner'
+require_relative 'cons'
 
 class Revo::ParseError < Racc::ParseError
   attr_accessor :context, :message
@@ -134,4 +118,3 @@ def print_context(line_no, column_no, context)
   end
   retval
 end
-
