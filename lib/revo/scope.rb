@@ -24,7 +24,7 @@ module Revo
     end
 
     def define(name, &block)
-      self[name] = Function.new(&block)
+      self[name] = Function.new(self, &block)
     end
 
     def set!

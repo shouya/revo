@@ -27,6 +27,11 @@ module Revo
       !null?
     end
 
+    # return whether the cons's cdr is not null
+    def improper_pair?
+      @cdr != NULL
+    end
+
     # return whether the cons is null
     def null?
       self == NULL
