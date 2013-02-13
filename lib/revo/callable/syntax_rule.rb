@@ -17,15 +17,14 @@ module Revo
     def compile_pattern(pattern)
       if pattern.is_a? Cons
         seq_mt = SequenceMatcher.new
-        prev = nil
         tail = pattern.each do |ele|
           if ele.is_a? Sybmol and ele.val == '...'
-            seq.pop
-            seq << ElipsisMatcher.new(prev.name)
+            prev = seq.pop
+            raise 'Invalid "(...)" in syntax rule pattern.' if prev.nil?
+            seq_mt << EllipsisMatcher.new(prev)
           else
-            prev = compile_pattern(ele)
+            seq_mt << compile_pattern(ele)
           end
-          seq_mt << prev
         end
         if tail.improper_pair?
           seq_mt << RestMatcher.new(tail.cdr)
@@ -35,7 +34,13 @@ module Revo
 
       elsif pattern.is_a? Symbol
         name = pattern.val
+        # (syntax-rules () (((foo ...) xxx)))
+        return EllipsisMatcher.new(WhateverExprMatcher.new) if name == '...'
+
+        # (syntax-rules (in) (((for x *in* list expr ...) xxx)))
         return KeywordMatcher.new(name) if @keywords.include? name
+
+        # (syntax-rules () (((foo _ _) xxx)))
         return WhateverExprMatcher.new if name == ('_')     # \('_')/
         if @names.include? name
           raise 'Name "#{name}" is already existing.'
@@ -48,6 +53,8 @@ module Revo
     end
 
     def compile_template(template)
+      if template.is_a? Cons
+      end
     end
   end
 end

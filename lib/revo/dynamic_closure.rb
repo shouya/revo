@@ -1,6 +1,5 @@
 #
 
-
 module Revo
   class DynamicClosure
     include Expression

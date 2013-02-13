@@ -15,7 +15,6 @@ module Revo
     attr_accessor :matchers, :improper
 
     def initialize
-      super
       @matchers = []
       @improper = false
     end
@@ -24,23 +23,33 @@ module Revo
       matchers << matcher
     end
     def pop
-      matchers.pop
+      @matchers.pop
     end
 
     def match(expr, hash)
       return nil unless expr.is_a? Cons
+      return nil if expr.tail.improper_pair? and not @improper
 
-      elements = []
-      tail = expr.each do |x|
-        elements << x
+      while mtc_ptr < @matchers.length
+        matcher = @matchers[mtc_ptr]
+        if matcher.is_a? EllipsisMatcher
+          hash = matcher.match(expr, hash)
+          expr = expr.tail
+        elsif matcher.is_a? RestMatcher
+          hash = matcher.match(expr, hash)
+          expr = NULL
+          break
+        else
+          hash = matcher.match(expr.car, hash)
+          expr = expr.cdr
+        end
+
+        mtc_ptr += 1
+        return nil if hash.nil?
       end
 
-      ele_ptr = 0
-      mtc_ptr = 0
-
-      loop do
-
-      end
+      return nil if expr != NULL
+      hash
     end
   end
 
@@ -72,8 +81,24 @@ module Revo
     end
   end
 
-  class ElipsisMatch < Matcher
-    attr_accessor :value
+  class EllipsisMatch < Matcher
+    attr_accessor :matcher
+    def initialize(matcher)
+      @matcher = matcher
+    end
+
+    def match(expr, hash)
+      result = []
+      tmp = {}
+      expr.each do |x|
+        @matcher.match(x, tmp)
+        result << x
+      end
+      if tmp.keys.length == 1
+        return hash.merge({tmp.keys[0] => Cons.construct(result)})
+      end
+      hash
+    end
   end
   class NameMatcher < Matcher
     attr_accessor :name
@@ -84,6 +109,6 @@ module Revo
       hash.merge({@name => expr})
     end
   end
-  class RestMatcher < Matcher
-  end
+  class RestMatcher < NameMatcher; end
+
 end
