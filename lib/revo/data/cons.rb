@@ -3,6 +3,7 @@
 module Revo
   class Cons
     include Enumerable
+    include Expression
 
     attr_accessor :car, :cdr
 
@@ -49,6 +50,11 @@ module Revo
         items << '.' << tail.cdr.to_s
       end
       "(#{items.join(' ')})"
+    end
+
+    def eval(scope)
+      first = Revo.eval(@car, scope)
+      first.call(scope, @cdr)
     end
 
     class << self

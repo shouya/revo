@@ -3,9 +3,6 @@
 
 module Revo
   class Matcher
-    def initialize
-    end
-
     def match(expr, hash)
       raise 'Abstract method invoked!'
     end

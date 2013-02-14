@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 #
 
-$: << File.expand_path('../，revo', __FILE__)
+$: << File.expand_path('../revo', __FILE__)
 
+require 'forwardable'
 
-require 'parser.tab'
-require 'cons'
+%w[scanner parser.tab scope runtime value expression
+   data/cons data/character data/symbol data/vector].map do |x|
+  require x
+end
 
 module Revo
   class << self

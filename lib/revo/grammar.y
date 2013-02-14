@@ -28,7 +28,7 @@ rule
              | CHARACTER
              | INTEGER
              | FLOAT
-             | SYMBOL
+             | SYMBOL     { Symbol.new(val[0]) }
              | BOOLEAN
 
          expr: literal
@@ -60,9 +60,6 @@ unquote_splicing: COMMA_AT expr  { Cons[:'unquote-splicing', val[1]] }
 
 
 ---- header
-require_relative 'scanner'
-require_relative 'cons'
-
 class Revo::ParseError < Racc::ParseError
   attr_accessor :context, :message
   def initialize(msg, ctx)
