@@ -19,7 +19,7 @@ rule
 
    multi_expr: multi_expr_x      { Cons[:begin, val[0]] }
 
- multi_expr_x: expr expr         { Cons[val[0], val[1]] }
+ multi_expr_x: expr expr         { Cons[val[0], Cons[val[1], NULL]] }
              | expr multi_expr_x { Cons[val[0], val[1]] }
 
 
