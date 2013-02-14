@@ -16,7 +16,6 @@ end
 syntax(:define) do |name, *other|
   if name.is_a? Cons and name.car.is_a? Symbol
     name, param = name.car, name.cdr
-#    p [name, param, *other]
     closure = call(:lambda, param, *other)
     env[name.to_s] = closure
   elsif name.is_a? Symbol
@@ -27,15 +26,7 @@ syntax(:define) do |name, *other|
 end
 
 syntax(:lambda) do |params, *body|
-  real_body = nil
-  if body.length == 1
-    real_body = body[0]
-  elsif body.length == 0
-    real_body = NULL
-  else
-    real_body = Cons[:begin, Cons.construct(body)]
-  end
-  closure = Closure.new(env, params, real_body)
+  Closure.new(env, params, autobegin(*body))
 end
 
 syntax(:begin) do |*exprs|
@@ -45,6 +36,19 @@ syntax(:begin) do |*exprs|
   end
   lastval
 end
+
+define(:list) do |*vals|
+  list(*vals)
+end
+
+syntax(:let) do |binding, *body|
+  scope = Scope.new(env)
+  binding.each do |bd|
+    scope[bd.car.val.to_s] = Revo.eval(bd.cdr.car, env)
+  end
+  Revo.eval(DynamicClosure.new(scope, autobegin(*body)), nil)
+end
+
 
 syntax(:debug) do |exp|
   ap exp

@@ -7,7 +7,9 @@ require 'forwardable'
 
 %w[scanner parser.tab
    callable/primitive_procedure callable/primitive_macro callable/closure
-   scope runtime value expression
+   expression
+   callable/dynamic_closure
+   scope runtime value
    data/cons data/character data/symbol data/vector].map do |x|
   require x
 end
@@ -21,10 +23,10 @@ module Revo
       return expr if PRIMITIVE_RUBY_TYPES.any? {|type| expr.is_a? type }
       return expr.eval(scope) if expr.is_a? Expression
       return expr.val if expr.is_a? Value
-      return expr
+      raise 'expression type is unable to be evaluated'
     end
 
-    REVO_TYPES = (PRIMITIVE_RUBY_TYPES + [Cons, Closure]).freeze
+    REVO_TYPES = (PRIMITIVE_RUBY_TYPES + [Cons, Closure, DynamicClosure,]).freeze
 
     def convert(val)
       return val if REVO_TYPES.any? {|type| val.is_a? type }
