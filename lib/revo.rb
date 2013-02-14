@@ -24,8 +24,10 @@ module Revo
       return expr
     end
 
+    REVO_TYPES = (PRIMITIVE_RUBY_TYPES + [Cons, Closure]).freeze
+
     def convert(val)
-      return val if PRIMITIVE_RUBY_TYPES.any? {|type| val.is_a? type }
+      return val if REVO_TYPES.any? {|type| val.is_a? type }
       return Revo::Symbol.new(val.to_s) if val.is_a? ::Symbol
       return Cons.construct(val) if val.is_a? Array
       return val

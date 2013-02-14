@@ -50,11 +50,11 @@ rule
  list_content: /* empty */       { NULL }
              | expr list_content { Cons[val[0], val[1]] }
 
-  quoted_expr: QUOTE expr        { Cons[:quote, val[1]] }
+  quoted_expr: QUOTE expr        { Cons[:quote, Cons[val[1], NULL]] }
 
-   quasiquote: BACKQUOTE expr    { Cons[:quasiquote, val[1]] }
-      unquote: COMMA expr        { Cons[:unquote, val[1]] }
-unquote_splicing: COMMA_AT expr  { Cons[:'unquote-splicing', val[1]] }
+   quasiquote: BACKQUOTE expr    { Cons[:quasiquote, Cons[val[1], NULL]] }
+      unquote: COMMA expr        { Cons[:unquote, Cons[val[1], NULL]] }
+unquote_splicing: COMMA_AT expr  { Cons[:'unquote-splicing', Cons[val[1], NULL]] }
 
 
 

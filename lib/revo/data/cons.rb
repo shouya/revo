@@ -13,13 +13,14 @@ module Revo
     end
 
     def each
-      iter, tail = self, NULL
+      return if null?
+      iter, _tail = self, NULL
       while iter.is_a?(Cons) and not iter.null?
         yield iter.car if block_given?
-        tail = iter
+        _tail = iter
         iter = iter.cdr
       end
-      tail
+      _tail
     end
     alias_method :tail, :each
 
@@ -44,6 +45,7 @@ module Revo
     end
 
     def to_s
+      return '()' if self == NULL
       items = []
       tail = each { |x| items << x.inspect }
       unless tail.cdr == NULL
@@ -63,13 +65,14 @@ module Revo
       end
 
       def construct(enum)
-        root, curr = nil, NULL
-        enum.each do |val|
+        curr = NULL
+
+        enum.reverse_each do |val|
           val = yield(val) if block_given?
           curr = new(val, curr)
-          root ||= curr
         end
-        root || NULL
+
+        curr
       end
     end
   end

@@ -28,10 +28,10 @@ module Revo
     end
 
     def define(name, &block)
-      self[name.to_s] = PrimitiveProcedure.new(self, &block)
+      self[name.to_s] = PrimitiveProcedure.new(name, &block)
     end
     def syntax(name, &block)
-      self[name.to_s] = PrimitiveMacro.new(self, &block)
+      self[name.to_s] = PrimitiveMacro.new(name, &block)
     end
 
     def set!(name, val)

@@ -1,5 +1,7 @@
 #
 
+require_relative 'primitive_helpers'
+
 module Revo
   class PrimitiveProcedure
     attr_accessor :scope, :name, :body
@@ -16,7 +18,10 @@ module Revo
     def apply(scope, args)
       mybody = @body
       Object.new.instance_eval do
-        singleton_class.class_eval { attr_accessor :env }
+        singleton_class.class_eval do
+          include PrimitiveHelpers
+          attr_accessor :env
+        end
         @env = scope
         instance_exec(*args, &mybody)
       end

@@ -6,9 +6,9 @@ require 'ap'
 include Revo
 
 rt = Runtime.new
-ap rt.eval(Parser.parse(DATA.read))
+rt.eval(Parser.parse(DATA.read))
 
 __END__
-(define (mylove)
- "happy valentine's day!")
-(display (mylove))
+;(define (mylove) "happy valentine's day!")
+;(display (mylove))
+(display ((lambda () "happy valentine's day!")))
