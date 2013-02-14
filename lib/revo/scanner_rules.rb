@@ -1,7 +1,9 @@
-
+#
 
 module Revo
   class Scanner
+    symbol_chars = '[\w_\-\@\?\$\%\^\*\+\/\~\=\<\>\!\.]'
+
     rule(/[ \t]+/) { :PASS }
     rule(/\r\n|\r|\n/) { increase_line_number; :PASS }
 
@@ -16,6 +18,9 @@ module Revo
     symbol_rule("'")  { [:QUOTE, nil]     }
     symbol_rule('&')  { [:AMPERSAND, nil] }
     symbol_rule('`')  { [:BACKQUOTE, nil] }
+
+    rule(Regexp.new('\.' + "#{symbol_chars}+")) { [:SYMBOL, @match] }
+
     symbol_rule('.')  { [:PERIOD, nil]    }
 
 
@@ -30,7 +35,7 @@ module Revo
 #    symbol_rule('\0[xX]\d+') {  }
     rule(/./, :DSTR)         { @buffer[:str] << @match; :PASS }
 
-    rule(/[\w_\-\@\?\$\%\^\*\+\/\~\=\<\>\!]+/) { [:SYMBOL, @match] }
+    rule(Regexp.new("#{symbol_chars}+")) { [:SYMBOL, @match] }
 
   end
 end

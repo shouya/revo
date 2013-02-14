@@ -2,6 +2,9 @@
 
 require 'forwardable'
 
+require_relative 'scope'
+require_relative 'parser.tab'
+
 module Revo
 
   class Runtime

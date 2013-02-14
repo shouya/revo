@@ -1,5 +1,8 @@
 #
 
+require_relative 'callable/primitive_procedure'
+require_relative 'callable/primitive_macro'
+
 module Revo
   class Scope
     extend Forwardable

@@ -2,7 +2,7 @@
 
 module Revo
   class Template
-    def expand
+    def expand(env)
     end
   end
 
@@ -12,13 +12,21 @@ module Revo
       @const
     end
 
-    def expand
+    def expand(_)
       @const
     end
   end
 
-  class SymbolTemplate
+  class ConsTemplate
+  end
 
+  class SymbolTemplate
+    attr_accessor :name
+    def initialize(name)
+      @name = name
+    end
+    def expand(env)
+    end
   end
 
 end

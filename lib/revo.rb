@@ -5,14 +5,13 @@ $: << File.expand_path('../revo', __FILE__)
 
 require 'forwardable'
 
-%w[scanner parser.tab
-   callable/primitive_procedure callable/primitive_macro callable/closure
-   expression
-   callable/dynamic_closure
-   scope runtime value
-   data/cons data/character data/symbol data/vector].map do |x|
-  require x
-end
+require_relative 'revo/runtime'
+require_relative 'revo/data/expression'
+require_relative 'revo/data/value'
+require_relative 'revo/data/cons'
+require_relative 'revo/data/symbol'
+require_relative 'revo/callable/closure'
+require_relative 'revo/callable/dynamic_closure'
 
 module Revo
   class << self
@@ -26,7 +25,7 @@ module Revo
       raise 'expression type is unable to be evaluated'
     end
 
-    REVO_TYPES = (PRIMITIVE_RUBY_TYPES + [Cons, Closure, DynamicClosure,]).freeze
+    REVO_TYPES = (PRIMITIVE_RUBY_TYPES + [Cons, Closure, DynamicClosure]).freeze
 
     def convert(val)
       return val if REVO_TYPES.any? {|type| val.is_a? type }

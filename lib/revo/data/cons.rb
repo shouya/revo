@@ -55,6 +55,7 @@ module Revo
     end
 
     def eval(scope)
+      return NULL if null?
       first = Revo.eval(@car, scope)
       first.call(scope, @cdr)
     end

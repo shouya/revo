@@ -60,6 +60,8 @@ unquote_splicing: COMMA_AT expr  { Cons[:'unquote-splicing', Cons[val[1], NULL]]
 
 
 ---- header
+require_relative 'scanner'
+
 class Revo::ParseError < Racc::ParseError
   attr_accessor :context, :message
   def initialize(msg, ctx)

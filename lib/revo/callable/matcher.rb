@@ -2,6 +2,24 @@
 
 
 module Revo
+  class EllipsisMatch
+    attr_accessor :data
+    def initialize
+      @data = []
+    end
+    def <<(value)
+      @data << value
+    end
+
+    def to_s
+      @data.to_s
+    end
+    alias_method :inspect, :to_s
+  end
+  class NormalMatch
+    attr_accessor :val
+  end
+
   class Matcher
     def match(expr, hash)
       raise 'Abstract method invoked!'
@@ -27,6 +45,7 @@ module Revo
       return nil unless expr.is_a? Cons
       return nil if expr.tail.improper_pair? and not @improper
 
+      mtc_ptr = 0
       while mtc_ptr < @matchers.length
         matcher = @matchers[mtc_ptr]
         if matcher.is_a? EllipsisMatcher
@@ -45,7 +64,7 @@ module Revo
         return nil if hash.nil?
       end
 
-      return nil if expr != NULL
+      return nil if expr.cdr != NULL
       hash
     end
   end
@@ -72,27 +91,33 @@ module Revo
     end
   end
 
-  class WhateverExprMatch < Matcher
+  class WhateverExprMatcher < Matcher
     def match(expr, hash)
       hash
     end
   end
 
-  class EllipsisMatch < Matcher
+  class EllipsisMatcher < Matcher
     attr_accessor :matcher
     def initialize(matcher)
       @matcher = matcher
     end
 
     def match(expr, hash)
-      result = []
+      result = Hash.new
       tmp = {}
+      # eat up all rest expressions
       expr.each do |x|
-        @matcher.match(x, tmp)
-        result << x
+        tmp = @matcher.match(x, tmp)
+        return nil if tmp.nil?
+        tmp.each do |key, value|
+          result[key] ||= EllipsisMatch.new
+          result[key] << value
+        end
       end
-      if tmp.keys.length == 1
-        return hash.merge({tmp.keys[0] => Cons.construct(result)})
+
+      if tmp.keys.length >= 1
+        return hash.merge(result)
       end
       hash
     end
