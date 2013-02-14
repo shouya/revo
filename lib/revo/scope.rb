@@ -1,7 +1,5 @@
 #
 
-require_relative 'callable/function'
-
 module Revo
   class Scope
     extend Forwardable
@@ -30,10 +28,10 @@ module Revo
     end
 
     def define(name, &block)
-      self[name.to_s] = Function.new(self, &block)
+      self[name.to_s] = PrimitiveProcedure.new(self, &block)
     end
     def syntax(name, &block)
-      self[name.to_s] = Macro.new(self, &block)
+      self[name.to_s] = PrimitiveMacro.new(self, &block)
     end
 
     def set!(name, val)

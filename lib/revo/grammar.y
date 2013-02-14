@@ -28,7 +28,7 @@ rule
              | CHARACTER
              | INTEGER
              | FLOAT
-             | SYMBOL     { Symbol.new(val[0]) }
+             | SYMBOL     { Revo::Symbol.new(val[0]) }
              | BOOLEAN
 
          expr: literal

@@ -8,8 +8,8 @@ module Revo
     attr_accessor :car, :cdr
 
     def initialize(car, cdr)
-      @car = car
-      @cdr = cdr
+      @car = Revo.convert(car)
+      @cdr = Revo.convert(cdr)
     end
 
     def each
@@ -45,9 +45,9 @@ module Revo
 
     def to_s
       items = []
-      tail = each { |x| items << x.to_s }
+      tail = each { |x| items << x.inspect }
       unless tail.cdr == NULL
-        items << '.' << tail.cdr.to_s
+        items << '.' << tail.cdr.inspect
       end
       "(#{items.join(' ')})"
     end
@@ -74,6 +74,4 @@ module Revo
     end
   end
 
-  NULL = Cons.new(nil, nil)
-  NULL.freeze
 end

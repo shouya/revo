@@ -13,7 +13,7 @@ module Revo
       @rules = []
     end
 
-    def define_rule(pattern, template)
+    def define_rule(pattern, template)e
       @rules << SyntaxRule.new(@keywords, pattern, template)
     end
 
