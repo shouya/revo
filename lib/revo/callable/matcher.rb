@@ -16,9 +16,6 @@ module Revo
     end
     alias_method :inspect, :to_s
   end
-  class NormalMatch
-    attr_accessor :val
-  end
 
   class Matcher
     def match(expr, hash)
@@ -27,11 +24,12 @@ module Revo
   end
 
   class SequenceMatcher < Matcher
-    attr_accessor :matchers, :improper
+    attr_accessor :matchers, :improper, :obligate
 
     def initialize
       @matchers = []
       @improper = false
+      @obligate = nil
     end
 
     def <<(matcher)
@@ -49,8 +47,8 @@ module Revo
       while mtc_ptr < @matchers.length
         matcher = @matchers[mtc_ptr]
         if matcher.is_a? EllipsisMatcher
-          hash = matcher.match(expr, hash)
-          expr = expr.tail
+          hash = matcher.match(expr, hash, @obligate)
+          (expr.length - @obligate).times { expr = expr.cdr }
         elsif matcher.is_a? RestMatcher
           hash = matcher.match(expr, hash)
           expr = NULL
@@ -64,7 +62,7 @@ module Revo
         return nil if hash.nil?
       end
 
-      return nil if expr.cdr != NULL
+      return nil if expr.is_a? Cons and expr != NULL
       hash
     end
   end
@@ -103,11 +101,13 @@ module Revo
       @matcher = matcher
     end
 
-    def match(expr, hash)
+    def match(expr, hash, obligate)
       result = Hash.new
       tmp = {}
-      # eat up all rest expressions
-      expr.each do |x|
+      # eat up all rest expressions but those obligated
+      return nil if obligate > expr.length
+      sacrifice = expr.to_a[0..-(obligate + 1)]
+      sacrifice.each do |x|
         tmp = @matcher.match(x, tmp)
         return nil if tmp.nil?
         tmp.each do |key, value|

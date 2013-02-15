@@ -60,6 +60,10 @@ module Revo
       first.call(scope, @cdr)
     end
 
+    def length
+      count
+    end
+
     class << self
       def [](car, cdr)
         new(car, cdr)

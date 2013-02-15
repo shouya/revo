@@ -31,18 +31,21 @@ module Revo
               pattern.cdr.car.is_a? Symbol and pattern.cdr.car.val == '...'
             raise 'Misplaced ellipsis' if ellipsis_existed
             ellipsis_existed = true
+            seq_mt.obligate = 0
             seq_mt << EllipsisMatcher.new(compile_pattern(token, true))
             pattern = pattern.cdr.cdr
             next
           end
 
           seq_mt << compile_pattern(token, in_ellipsis)
+          seq_mt.obligate += 1 unless seq_mt.obligate.nil?
           pattern = pattern.cdr
         end
 
         unless pattern.is_a? Cons
-          seq_mt << compile_pattern(pattern, in_ellipsis)
           seq_mt.improper = true
+          matcher = compile_pattern(pattern, in_ellipsis)
+          seq_mt << RestMatcher.new(matcher.name)
         end
         seq_mt
 
@@ -56,11 +59,12 @@ module Revo
 
         # (syntax-rules () (((foo *_* _) xxx)))               \(*_*)/
         return WhateverExprMatcher.new if name == ('_')     # \('_')/
-        if @variables.include? name and not @ellipsis_vars.include? name
+
+        if @variables.include? name and
+            (not in_ellipsis and not @ellipsis_var.include? name)
           raise "Name \"#{name}\" is already existing."
         end
-        @variables << name
-        @ellipsis_vars << name if in_ellipsis
+        in_ellipsis ? @ellipsis_vars |= [name] : @variables << name
         NameMatcher.new(name)
 
       else
