@@ -76,14 +76,11 @@ module Revo
     def compile_template(template)
       if template.is_a? Cons
         seq_mt = SequenceTemplate.new
-        ellipsis_existed = false
         while template.is_a? Cons and not template.null?
           token = template.car
 
           if template.cdr.is_a? Cons and
               template.cdr.car.is_a? Symbol and template.cdr.car.val == '...'
-            raise 'Misplaced ellipsis' if ellipsis_existed
-            ellipsis_existed = true
             seq_mt << EllipsisTemplate.new(compile_template(token))
             template = template.cdr.cdr
             next

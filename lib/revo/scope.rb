@@ -38,6 +38,10 @@ module Revo
     def syntax(name, &block)
       self[name.to_s] = PrimitiveMacro.new(name, &block)
     end
+    def define_alias(new_name, reference)
+      raise "#{reference.to_s} doesn't exist!" unless find_scope(reference.to_s)
+      self[new_name.to_s] = self[reference.to_s]
+    end
 
     def set!(name, val)
       name = name.to_s

@@ -13,7 +13,8 @@ module Revo
     extend Forwardable
     def_delegators :@user_scope, :define, :syntax, :eval, :[]
 
-    BUILTIN_LIBRARIES = %w[primitives.rb]
+#    BUILTIN_LIBRARIES = %w[primitives.rb]
+    BUILTIN_LIBRARIES = %w[primitives.rb syntax.rv stdlib.rv]
     BUILTIN_LIBRARIES_PATH = File.expand_path('../builtin', __FILE__)
 
     def initialize
@@ -25,7 +26,7 @@ module Revo
         .each do |lib|
 
         if File.extname(lib) == '.rb'
-          @top_level.instance_eval(File.read(lib))
+          @top_level.instance_eval(File.read(lib), lib)
         elsif File.extname(lib) == '.rv'
           code = Parser.parse(File.read(lib))
           @top_level.eval(code)

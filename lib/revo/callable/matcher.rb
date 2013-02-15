@@ -145,7 +145,8 @@ module Revo
       @name = name
     end
     def match(expr, hash, scope)
-      hash.merge({@name => DynamicClosure.new(scope, expr)})
+      hash.merge({@name => expr})
+      #      hash.merge({@name => DynamicClosure.new(scope, expr)})
     end
 
     def inspect
