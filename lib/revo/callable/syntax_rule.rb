@@ -9,11 +9,12 @@ require_relative '../data/symbol'
 
 module Revo
   class SyntaxRule
-    attr_accessor :keywords, :pattern, :template
+    attr_accessor :keywords, :pattern, :template, :variables, :ellipsis_vars
 
     def initialize(keywords, pattern, template)
       @variables = []
       @ellipsis_vars = []
+
       @keywords = keywords
       @pattern = compile_pattern(pattern)
       @template = compile_template(template)
@@ -62,7 +63,7 @@ module Revo
         return WhateverExprMatcher.new if name == ('_')     # \('_')/
 
         if @variables.include? name and
-            (not in_ellipsis and not @ellipsis_var.include? name)
+            (not in_ellipsis and not @ellipsis_vars.include? name)
           raise "Name \"#{name}\" is already existing."
         end
         in_ellipsis ? @ellipsis_vars |= [name] : @variables << name

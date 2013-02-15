@@ -3,18 +3,14 @@
 
 module Revo
   class EllipsisMatch
+    extend Forwardable
+
     attr_accessor :data
     def initialize
       @data = []
     end
-    def <<(value)
-      @data << value
-    end
 
-    def to_s
-      @data.to_s
-    end
-    alias_method :inspect, :to_s
+    def_delegators(:@data, :<<, :[], :length, :to_s, :inspect)
   end
 
   class Matcher
