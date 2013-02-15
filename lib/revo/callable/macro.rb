@@ -7,22 +7,22 @@ require_relative 'syntax_rule'
 
 module Revo
   class Macro
-    attr_accessor :keywords, :name, :rules
+    attr_accessor :keywords, :name, :rules, :hygienic
 
-    def initialize(name, keywords)
+    def initialize(name, keywords, hygienic = false)
       @name = name
       @keywords = keywords
       @rules = []
+      @hygienic = hygienic
     end
 
     def define_rule(pattern, template)
-      @rules << SyntaxRule.new(@keywords, pattern, template)
+      @rules << SyntaxRule.new(self, @keywords, pattern, template)
     end
 
     def call(scope, args)
-      puts args.inspect
-      puts '-------'
-      Revo.eval(expand(scope, args).tap{|x| p x}, scope)
+      expansion = expand(scope, args)
+      return Revo.eval(expansion, scope) if expansion
       raise 'Syntax error!'
     end
 

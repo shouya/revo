@@ -26,8 +26,6 @@ syntax(:define) do |name, *other|
 end
 
 syntax(:set!) do |name, val|
-  p name
-  p '-----------'
   assert(name.is_a? Symbol)
   env.set!(name.val, Revo.eval(val, env))
 end
@@ -79,7 +77,7 @@ syntax('define-syntax') do |name, rules|
   keywords = rules.cdr.car
   assert(keywords.all? {|x| x.is_a? Symbol })
   keywords = keywords.map(&:val)
-  macro = Macro.new(name.val, keywords)
+  macro = Macro.new(name.val, keywords, runtime.options[:hygienic_macro])
   rules.cdr.cdr.each do |rule|
     assert(rule.car.is_a? Cons)    # pattern
     assert(rule.car.car == name)

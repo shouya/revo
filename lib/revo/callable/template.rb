@@ -6,7 +6,7 @@ require_relative '../data/dynamic_closure'
 
 module Revo
   class Template
-    def expand(hash, scope)
+    def expand(hash, scope, macro)
       raise 'Virtual method invoked!'
     end
   end
@@ -25,10 +25,10 @@ module Revo
       "[#{@improper ? 'improper-':''}seq: " \
         "#{@data.map(&:inspect).join(" ")}]"
     end
-    def expand(hash, scope)
+    def expand(hash, scope, macro)
       result = []
       @data.each do |x|
-        expansion = x.expand(hash, scope)
+        expansion = x.expand(hash, scope, macro)
         if x.is_a? EllipsisTemplate
           result.concat(expansion)
         else
@@ -66,12 +66,12 @@ module Revo
     def initialize(name)
       @name = name
     end
-    def expand(hash, scope)
+    def expand(hash, scope, macro)
       value = hash[@name]
       if value.is_a? EllipsisMatch
         raise "Error to apply an ellipsis value on a direct variable #{@name}"
       end
-      DynamicClosure.construct(scope, value)
+      macro.hygienic ? DynamicClosure.construct(scope, value) : value
     end
     def inspect
       "<:#@name>"
@@ -87,7 +87,7 @@ module Revo
       @template = template
     end
 
-    def expand(hash, scope)
+    def expand(hash, scope, macro)
       result = []
       nova_hash = hash.dup
       ellipsis_vars = names
@@ -96,7 +96,7 @@ module Revo
         ellipsis_vars.each do |var|
           nova_hash[var] = hash[var][i]
         end
-        result << @template.expand(nova_hash, scope)
+        result << @template.expand(nova_hash, scope, macro)
       end
       result
     end

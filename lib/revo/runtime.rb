@@ -18,7 +18,7 @@ module Revo
     BUILTIN_LIBRARIES_PATH = File.expand_path('../builtin', __FILE__)
 
     DEFAULT_OPTIONS = {
-      :unhygienic_macro => false
+      :hygienic_macro => true
     }.freeze
 
     def initialize(options = {})
@@ -27,7 +27,7 @@ module Revo
       @user_scope = Scope.new(@top_level)
 
       @options = DEFAULT_OPTIONS.merge options
-      tmp, @options[:unhygienic_macro] = @options[:unhygienic_macro], true
+      tmp, @options[:hygienic_macro] = @options[:hygienic_macro], false
 
       BUILTIN_LIBRARIES
         .map {|x| File.join(BUILTIN_LIBRARIES_PATH, x)}
@@ -43,7 +43,7 @@ module Revo
         end
       end
 
-      @options[:unhygienic_macro] = tmp
+      @options[:hygienic_macro] = tmp
     end
 
     def options

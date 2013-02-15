@@ -10,8 +10,9 @@ module Revo
   class SyntaxRule
     attr_accessor :keywords, :pattern, :template
     attr_accessor :variables, :ellipsis_vars, :options
+    attr_accessor :macro
 
-    def initialize(keywords, pattern, template)
+    def initialize(macro, keywords, pattern, template)
       @variables = []
       @ellipsis_vars = []
 
@@ -19,6 +20,7 @@ module Revo
       @pattern = compile_pattern(pattern)
       @template = compile_template(template)
       @options = {}
+      @macro = macro
     end
 
     def compile_pattern(pattern, in_ellipsis = false)
@@ -112,7 +114,7 @@ module Revo
     end
 
     def expand(match_result, scope)
-      @template.expand(match_result, scope)
+      @template.expand(match_result, scope, @macro)
     end
 
   end

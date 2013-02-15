@@ -19,8 +19,10 @@ module Revo
         singleton_class.class_eval do
           include PrimitiveHelpers
           attr_accessor :env
+          attr_accessor :runtime
         end
         @env = scope
+        @runtime = scope.runtime
         instance_exec(*args, &mybody)
       end
     end
