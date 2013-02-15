@@ -23,5 +23,13 @@ module Revo
     def list(*vals)
       Cons.construct(vals)
     end
+    def assert(expr, msg = nil)
+      return if expr
+      raise(*(msg ? [msg] : []))
+    end
+
+    def quote(obj)
+      Cons.construct([:quote, obj])
+    end
   end
 end

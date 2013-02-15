@@ -5,7 +5,6 @@
 
 require_relative 'matcher'
 require_relative 'template'
-require_relative '../data/symbol'
 
 module Revo
   class SyntaxRule
@@ -110,6 +109,13 @@ module Revo
 
     end
 
+    def match(args, scope)
+      @pattern.match(args, {}, scope)
+    end
+
+    def expand(match_result)
+      @template.expand(match_result)
+    end
 
   end
 end

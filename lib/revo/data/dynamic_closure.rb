@@ -1,5 +1,7 @@
 #
 
+require_relative 'expression'
+
 module Revo
   class DynamicClosure
     include Expression

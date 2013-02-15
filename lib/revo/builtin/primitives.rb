@@ -49,6 +49,21 @@ syntax(:let) do |binding, *body|
   Revo.eval(DynamicClosure.new(scope, autobegin(*body)), nil)
 end
 
+syntax('define-syntax') do |name, rules|
+  assert(name.is_a? Symbol)
+  assert((rules.is_a? Cons) &&
+         (rules.car.is_a? Symbol) && (rules.car.val == 'syntax-rules'))
+  keywords = rules.cdr.car
+  assert(keywords.all? {|x| x.is_a? Symbol })
+  keywords = keywords.map(&:val)
+  macro = Macro.new(name.val, keywords)
+  rules.cdr.cdr.each do |rule|
+    assert(rule.car.is_a? Cons)    # pattern
+    assert(rule.car.car == name)
+    macro.define_rule(rule.car.cdr, autobegin(*rule.cdr.to_a))
+  end
+  call(:define, name, quote(macro))
+end
 
 syntax(:debug) do |exp|
   ap exp

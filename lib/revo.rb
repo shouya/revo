@@ -5,13 +5,11 @@ $: << File.expand_path('../revo', __FILE__)
 
 require 'forwardable'
 
-require_relative 'revo/runtime'
 require_relative 'revo/data/expression'
 require_relative 'revo/data/value'
 require_relative 'revo/data/cons'
 require_relative 'revo/data/symbol'
-require_relative 'revo/callable/closure'
-require_relative 'revo/callable/dynamic_closure'
+require_relative 'revo/runtime'
 
 module Revo
   class << self

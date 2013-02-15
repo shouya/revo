@@ -1,5 +1,7 @@
 #
 
+require_relative 'expression'
+
 module Revo
   class Symbol
     include Expression
