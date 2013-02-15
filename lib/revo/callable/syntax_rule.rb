@@ -4,6 +4,7 @@
 #
 
 require_relative 'matcher'
+require_relative 'template'
 require_relative '../data/symbol'
 
 module Revo
@@ -15,7 +16,7 @@ module Revo
       @ellipsis_vars = []
       @keywords = keywords
       @pattern = compile_pattern(pattern)
-      @template = template
+      @template = compile_template(template)
     end
 
     def compile_pattern(pattern, in_ellipsis = false)
@@ -38,7 +39,7 @@ module Revo
           end
 
           seq_mt << compile_pattern(token, in_ellipsis)
-          seq_mt.obligate += 1 unless seq_mt.obligate.nil?
+          seq_mt.obligate += 1 if ellipsis_existed
           pattern = pattern.cdr
         end
 
@@ -74,10 +75,40 @@ module Revo
 
     def compile_template(template)
       if template.is_a? Cons
-        template.each do
+        seq_mt = SequenceTemplate.new
+        ellipsis_existed = false
+        while template.is_a? Cons and not template.null?
+          token = template.car
+
+          if template.cdr.is_a? Cons and
+              template.cdr.car.is_a? Symbol and template.cdr.car.val == '...'
+            raise 'Misplaced ellipsis' if ellipsis_existed
+            ellipsis_existed = true
+            seq_mt << EllipsisTemplate.new(compile_template(token))
+            template = template.cdr.cdr
+            next
+          end
+
+          seq_mt << compile_template(token)
+          template = template.cdr
         end
+
+        unless template.is_a? Cons
+          seq_mt.improper = true
+          seq_mt << compile_template(template)
+        end
+        seq_mt
+
+      elsif template.is_a? Symbol and (@variables.include? template.val or
+                                       @ellipsis_vars.include? template.val)
+        SymbolTemplate.new(template.val)
+
+      else
+        ConstantTemplate.new(template)
       end
+
     end
+
 
   end
 end
