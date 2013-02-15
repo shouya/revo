@@ -4,7 +4,8 @@ require_relative 'matcher'
 
 module Revo
   class Template
-    def expand(hash, ellipsis_vars)
+    def expand(hash)
+      raise 'Virtual method invoked!'
     end
   end
 
@@ -22,10 +23,10 @@ module Revo
       "[#{@improper ? 'improper-':''}seq: " \
         "#{@data.map(&:inspect).join(" ")}]"
     end
-    def expand(hash, ellipsis_vars)
+    def expand(hash)
       result = []
       @data.each do |x|
-        expansion = x.expand(hash, ellipsis_vars)
+        expansion = x.expand(hash)
         if x.is_a? EllipsisTemplate
           result.concat(expansion)
         else
@@ -37,6 +38,9 @@ module Revo
       result = Cons.construct(result)
       result.tail.cdr = tail if @improper
       result
+    end
+    def names
+      @data.inject([]) {|xs,x| x.respond_to?(:names) ? xs |= x.names : xs}
     end
   end
 
@@ -60,15 +64,18 @@ module Revo
     def initialize(name)
       @name = name
     end
-    def expand(hash, _)
+    def expand(hash)
       value = hash[@name]
       if value.is_a? EllipsisMatch
-        raise 'Error to apply an ellipsis value on a direct variable'
+        raise "Error to apply an ellipsis value on a direct variable #{@name}"
       end
       value
     end
     def inspect
       "<:#@name>"
+    end
+    def names
+      [@name]
     end
   end
 
@@ -78,21 +85,25 @@ module Revo
       @template = template
     end
 
-    def expand(hash, ellipsis_vars)
+    def expand(hash)
       result = []
       nova_hash = hash.dup
-      count = hash[ellipsis_vars[0]].length
+      ellipsis_vars = names
+      count = ellipsis_vars.length == 0 ? 0 : hash[ellipsis_vars[0]].length
       count.times do |i|
         ellipsis_vars.each do |var|
           nova_hash[var] = hash[var][i]
         end
-        result << @template.expand(nova_hash, ellipsis_vars)
+        result << @template.expand(nova_hash)
       end
       result
     end
 
     def inspect
-      "#{@template.inspect}..."
+      "<#{@template.inspect}...>"
+    end
+    def names
+      @template.names
     end
   end
 

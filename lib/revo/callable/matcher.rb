@@ -61,6 +61,12 @@ module Revo
       return nil if expr.is_a? Cons and expr != NULL
       hash
     end
+
+    def inspect
+      "<seq#{@improper ? '-improper' : ''}" \
+      "(#{@obligate}) " \
+      "#{@matchers.map(&:inspect).join(' ')}>"
+    end
   end
 
   class ConstantMatcher < Matcher
@@ -71,6 +77,10 @@ module Revo
 
     def match(expr, hash)
       expr == @const ? hash : nil
+    end
+
+    def inspect
+      "<const: #{@const}>"
     end
   end
 
@@ -83,12 +93,19 @@ module Revo
     def match(expr, hash)
       (expr.is_a? Symbol) && (expr.val == @keyword) ? hash : nil
     end
+
+    def inspect
+      "<keyword: #{keyword}>"
+    end
   end
 
   class WhateverExprMatcher < Matcher
     def match(expr, hash)
       hash
     end
+    def inspect
+      "<whatever-you-like>"
+   end
   end
 
   class EllipsisMatcher < Matcher
@@ -117,6 +134,9 @@ module Revo
       end
       hash
     end
+    def inspect
+      "<#{@matcher.inspect} ...>"
+    end
   end
   class NameMatcher < Matcher
     attr_accessor :name
@@ -125,6 +145,10 @@ module Revo
     end
     def match(expr, hash)
       hash.merge({@name => expr})
+    end
+
+    def inspect
+      "<symbol: #{@name}>"
     end
   end
   class RestMatcher < NameMatcher; end
