@@ -26,6 +26,8 @@ syntax(:define) do |name, *other|
 end
 
 syntax(:set!) do |name, val|
+  p name
+  p '-----------'
   assert(name.is_a? Symbol)
   env.set!(name.val, Revo.eval(val, env))
 end

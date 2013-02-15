@@ -23,9 +23,9 @@ ap syntax.template
 puts 'ellipsis_vars:'
 ap syntax.ellipsis_vars
 puts 'match:'
-ap match = syntax.pattern.match(lisp.cdr.cdr.car, {}, Scope.new(nil))
+ap match = syntax.match(lisp.cdr.cdr.car)
 puts 'expansion:'
-ap syntax.template.expand(match)
+ap syntax.template.expand(match, Scope.new(nil))
 
 
 
@@ -37,6 +37,9 @@ ap syntax.template.expand(match)
 
 __END__
 (
- (letrec ((variable init) ...) body ...)
- ((lambda () (define variable init) ... body ...))
+ (swap op1 op2)
+ (let ((tmp op1))
+   (set! op1 op2)
+   (set! op2 tmp))
+ (swap a b)
 )

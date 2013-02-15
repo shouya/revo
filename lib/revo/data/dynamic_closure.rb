@@ -16,5 +16,22 @@ module Revo
     def eval(_)
       Revo.eval(@expression, @dynamic_scope)
     end
+
+    def inspect
+      "#<DynamicClosure:#{object_id} #{@expression}>"
+    end
+
+    class << self
+      def construct(scope, expr)
+        if expr.is_a? Symbol
+          #          return new(scope, expr) if scope.defined? expr.val
+          return expr
+        elsif expr.is_a? Cons and not expr.null?
+          return new(scope, expr)
+        else
+          expr
+        end
+      end
+    end
   end
 end

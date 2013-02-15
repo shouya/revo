@@ -8,7 +8,8 @@ require_relative 'template'
 
 module Revo
   class SyntaxRule
-    attr_accessor :keywords, :pattern, :template, :variables, :ellipsis_vars
+    attr_accessor :keywords, :pattern, :template
+    attr_accessor :variables, :ellipsis_vars, :options
 
     def initialize(keywords, pattern, template)
       @variables = []
@@ -17,10 +18,10 @@ module Revo
       @keywords = keywords
       @pattern = compile_pattern(pattern)
       @template = compile_template(template)
+      @options = {}
     end
 
     def compile_pattern(pattern, in_ellipsis = false)
-
       if pattern.is_a? Cons
         seq_mt = SequenceMatcher.new
 
@@ -106,12 +107,12 @@ module Revo
 
     end
 
-    def match(args, scope)
-      @pattern.match(args, {}, scope)
+    def match(args)
+      @pattern.match(args, {})
     end
 
-    def expand(match_result)
-      @template.expand(match_result)
+    def expand(match_result, scope)
+      @template.expand(match_result, scope)
     end
 
   end

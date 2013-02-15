@@ -15,7 +15,7 @@ module Revo
   end
 
   class Matcher
-    def match(expr, hash, scope)
+    def match(expr, hash)
       raise 'Abstract method invoked!'
     end
   end
@@ -36,7 +36,7 @@ module Revo
       @matchers.pop
     end
 
-    def match(expr, hash, scope)
+    def match(expr, hash)
       return nil unless expr.is_a? Cons
       return nil if expr.tail.improper_pair? and not @improper
 
@@ -44,14 +44,14 @@ module Revo
       while mtc_ptr < @matchers.length
         matcher = @matchers[mtc_ptr]
         if matcher.is_a? EllipsisMatcher
-          hash = matcher.match(expr, hash, @obligate, scope)
+          hash = matcher.match(expr, hash, @obligate)
           (expr.length - @obligate).times { expr = expr.cdr }
         elsif matcher.is_a? RestMatcher
-          hash = matcher.match(expr, hash, scope)
+          hash = matcher.match(expr, hash)
           expr = NULL
           break
         else
-          hash = matcher.match(expr.car, hash, scope)
+          hash = matcher.match(expr.car, hash)
           expr = expr.cdr
         end
 
@@ -115,14 +115,14 @@ module Revo
       @matcher = matcher
     end
 
-    def match(expr, hash, obligate, scope)
+    def match(expr, hash, obligate)
       result = Hash.new
       tmp = {}
       # eat up all rest expressions but those obligated
       return nil if obligate > expr.length
       sacrifice = expr.to_a[0..-(obligate + 1)]
       sacrifice.each do |x|
-        tmp = @matcher.match(x, tmp, scope)
+        tmp = @matcher.match(x, tmp)
         return nil if tmp.nil?
         tmp.each do |key, value|
           result[key] ||= EllipsisMatch.new
@@ -144,9 +144,9 @@ module Revo
     def initialize(name)
       @name = name
     end
-    def match(expr, hash, scope)
-      hash.merge({@name => expr})
-      #      hash.merge({@name => DynamicClosure.new(scope, expr)})
+    def match(expr, hash)
+      hash.merge(@name => expr)
+#                 expr : DynamicClosure.construct(scope, expr))
     end
 
     def inspect

@@ -8,13 +8,14 @@ require_relative 'callable/macro'
 module Revo
   class Scope
     extend Forwardable
-    attr_accessor :symbols, :parent
+    attr_accessor :symbols, :parent, :runtime
 
     def_delegators :@symbols, :'[]='
 
     def initialize(parent)
       @parent = parent
       @symbols = {}
+      @runtime = parent.runtime if parent
     end
 
     def [](name)
@@ -32,6 +33,9 @@ module Revo
       nil
     end
 
+    def defined?(name)
+      !!find_scope(name)
+    end
     def define(name, &block)
       self[name.to_s] = PrimitiveProcedure.new(name, &block)
     end
