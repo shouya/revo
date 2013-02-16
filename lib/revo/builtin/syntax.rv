@@ -99,9 +99,9 @@
             command ...
             (loop (do "step" variable step ...) ...)))))
   ((do "step" variable)
-    variable)
+   variable)
   ((do "step" variable step)
-    step)))
+   step)))
 
 ;-------------------------------------------------------------------------------
 

@@ -38,7 +38,12 @@ module Revo
 
     def match(expr, hash)
       return nil unless expr.is_a? Cons
-      return nil if expr.tail.improper_pair? and not @improper
+      return nil if not expr.null? and expr.tail.improper_pair? and not @improper
+
+      return nil if expr.null? and
+        @matchers.length != 0 and
+        (@matchers.length != 1 or @matchers[0].is_a? EllipsisMatcher)
+
 
       mtc_ptr = 0
       while mtc_ptr < @matchers.length
@@ -121,19 +126,25 @@ module Revo
       # eat up all rest expressions but those obligated
       return nil if obligate > expr.length
       sacrifice = expr.to_a[0..-(obligate + 1)]
-      sacrifice.each do |x|
-        tmp = @matcher.match(x, tmp)
+      if sacrifice.length == 0
+        tmp = @matcher.match(NULL, {})
         return nil if tmp.nil?
         tmp.each do |key, value|
           result[key] ||= EllipsisMatch.new
           result[key] << value
         end
+      else
+        sacrifice.each do |x|
+          tmp = @matcher.match(x, tmp)
+          return nil if tmp.nil?
+          tmp.each do |key, value|
+            result[key] ||= EllipsisMatch.new
+            result[key] << value
+          end
+        end
       end
 
-      if tmp.keys.length >= 1
-        return hash.merge(result)
-      end
-      hash
+      hash.merge(result)
     end
     def inspect
       "<#{@matcher.inspect} ...>"

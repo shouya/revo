@@ -26,4 +26,10 @@ __END__
 (do ((vec (make-vector 5))
      (i 0 (+ i 1)))
     ((= i 5) vec)
+  (display vec)
   (vector-set! vec i i))
+
+
+
+;(let loop ((vec (make-vector 5)) (i 0))
+;  (if (= i 5) (begin vec) (begin (vector-set! vec i i) (loop (do "step" vec) (do "step" i (+ i 1))))))

@@ -107,7 +107,9 @@ module Revo
         ellipsis_vars.each do |var|
           nova_hash[var] = hash[var][i] || EllipsisMatch.new
         end
-        result << @template.expand(nova_hash, scope, transformer)
+        @template.expand(nova_hash, scope, transformer).tap do |x|
+          result << x unless x.is_a? Cons and x.null?
+        end
       end
       result
     end
