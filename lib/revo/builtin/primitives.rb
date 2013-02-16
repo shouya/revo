@@ -86,7 +86,7 @@ syntax('define-syntax') do |name, rules|
   call(:define, name, quote(macro))
 end
 
-syntax(:debug) do |exp|
+define(:debug) do |exp|
   require 'ap'
   ap exp
 end
@@ -354,7 +354,7 @@ end
 # Vector functions
 
 # Returns a new vector of the given size, filled with the given filler value
-# (this defaults to the NULL list)
+# (this defaults to the NULL list
 define('make-vector') do |size, fill|
   fill = NULL if fill.nil?
   Vector.new(size, fill)
@@ -377,6 +377,10 @@ define('vector-set!') do |vector, k, object|
   size = vector.size
   raise "Cannot modify index #{k} of vector of length #{size}" if k >= size
   vector[k] = object
+end
+
+define('list->vector') do |list|
+  Vector.new(list.to_a)
 end
 
 #-------------------------------------------------------------------------------

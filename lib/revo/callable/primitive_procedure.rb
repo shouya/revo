@@ -11,8 +11,12 @@ module Revo
     end
 
     def call(scope, args)
-      args = args.map { |arg| Revo.eval(arg, scope) }
-      apply(scope, args)
+      puts "--pre call: #{@name} -> #{args}"
+      args = args.map { |arg| Revo.eval(arg, scope).tap{|x| puts "result: #{x}" } }
+      puts "//posteval: #{@name} -> #{args}"
+      retval = apply(scope, args)
+      puts "++postcall: #{@name} -> #{retval}"
+      retval
     end
 
     def apply(scope, args)

@@ -30,7 +30,8 @@ module Revo
       raise 'expression type is unable to be evaluated'
     end
 
-    REVO_TYPES = (PRIMITIVE_RUBY_TYPES + [Cons, Closure, DynamicClosure]).freeze
+    REVO_TYPES = (PRIMITIVE_RUBY_TYPES +
+                  [Cons, Closure, DynamicClosure, Vector]).freeze
 
     def convert(val)
       return val if REVO_TYPES.any? {|type| val.is_a? type }

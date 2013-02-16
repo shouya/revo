@@ -1,4 +1,4 @@
-#
+# -*- scheme -*-
 
 require_relative '../revo'
 require 'ap'
@@ -13,7 +13,7 @@ __END__
 ;(define (foo-1) '())
 ;(debug-scope 0)
 
-(define global 1)
+; (define global 1)
 
 ;(define trans-table (map
 ;                     (lambda (n)
@@ -21,4 +21,9 @@ __END__
 ;                          (for-each (lambda (x) (debug-scope 0))
 ;                                    '(0)))))
 ;                     '(0)))
-(map (lambda (a b) (debug-scope 1) (+ a b)) '(2 3 4) '(4 3 2))
+
+; (define odm one-digit-multiply)
+(do ((vec (make-vector 5))
+     (i 0 (+ i 1)))
+    ((= i 5) vec)
+  (vector-set! vec i i))

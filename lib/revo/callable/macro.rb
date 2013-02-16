@@ -3,7 +3,7 @@
 #
 #
 
-require_relative 'syntax_rule'
+require_relative 'transformer'
 
 module Revo
   class Macro
@@ -18,7 +18,7 @@ module Revo
     end
 
     def define_rule(pattern, template)
-      @rules << SyntaxRule.new(self, @keywords, pattern, template)
+      @rules << Transformer.new(self, @keywords, pattern, template)
     end
 
     def call(scope, args)

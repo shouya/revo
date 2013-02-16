@@ -6,7 +6,7 @@ require_relative '../data/dynamic_closure'
 
 module Revo
   class Template
-    def expand(hash, scope, macro)
+    def expand(hash, scope, transformer)
       raise 'Virtual method invoked!'
     end
   end
@@ -25,10 +25,10 @@ module Revo
       "[#{@improper ? 'improper-':''}seq: " \
         "#{@data.map(&:inspect).join(" ")}]"
     end
-    def expand(hash, scope, macro)
+    def expand(hash, scope, transformer)
       result = []
       @data.each do |x|
-        expansion = x.expand(hash, scope, macro)
+        expansion = x.expand(hash, scope, transformer)
         if x.is_a? EllipsisTemplate
           result.concat(expansion)
         else
@@ -66,7 +66,7 @@ module Revo
     def initialize(name)
       @name = name
     end
-    def expand(hash, scope, macro)
+    def expand(hash, scope, transformer)
       if hash.include? @name
         value = hash[@name]
         if value.is_a? EllipsisMatch
@@ -75,8 +75,8 @@ module Revo
         value
       else
         la_nomo = Symbol.new(@name)
-        if macro.hygienic
-          DynamicClosure.construct(macro.lexical_scope, la_nomo)
+        if transformer.hygienic
+          DynamicClosure.construct(transformer.lexical_scope, la_nomo)
         else
           la_nomo
         end
@@ -96,16 +96,18 @@ module Revo
       @template = template
     end
 
-    def expand(hash, scope, macro)
+    def expand(hash, scope, transformer)
       result = []
-      ellipsis_vars = names
-      count = ellipsis_vars.length == 0 ? 0 : hash[ellipsis_vars[0]].length
+      ellipsis_vars = names & (transformer.variables|transformer.ellipsis_vars)
+
+      count = ellipsis_vars.length == 0 ? 0 :
+        ellipsis_vars.map {|x| hash[x]}.map(&:length).max
       count.times do |i|
         nova_hash = hash.dup
         ellipsis_vars.each do |var|
-          nova_hash[var] = hash[var][i]
+          nova_hash[var] = hash[var][i] || EllipsisMatch.new
         end
-        result << @template.expand(nova_hash, scope, macro)
+        result << @template.expand(nova_hash, scope, transformer)
       end
       result
     end

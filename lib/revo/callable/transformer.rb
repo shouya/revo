@@ -7,10 +7,13 @@ require_relative 'matcher'
 require_relative 'template'
 
 module Revo
-  class SyntaxRule
+  class Transformer
+    extend Forwardable
     attr_accessor :keywords, :pattern, :template
     attr_accessor :variables, :ellipsis_vars, :options
     attr_accessor :macro
+
+    def_delegators :@macro, :hygienic, :name
 
     def initialize(macro, keywords, pattern, template)
       @variables = []
@@ -117,7 +120,7 @@ module Revo
     end
 
     def expand(match_result, scope)
-      @template.expand(match_result, scope, @macro)
+      @template.expand(match_result, scope, self)
     end
 
   end

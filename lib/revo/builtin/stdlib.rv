@@ -222,7 +222,7 @@
 
 ; (list arg ...)
 ; Allocates and returns a new list from its arguments
-(define (list . args) args)
+; (define (list . args) args)
 
 ; (length object)
 ; Returns the length of a proper list
@@ -435,13 +435,13 @@
 
 ; (list->vector list)
 ; Returns a newly allocated vector from a list
-(define (list->vector list)
-  (let* ((size (length list))
-         (new-vector (make-vector size)))
-    (do ((i 0 (+ i 1))
-         (pair list (cdr pair)))
-        ((= i size) new-vector)
-      (vector-set! new-vector i (car pair)))))
+;; (define (list->vector list)
+;;   (let* ((size (length list))
+;;          (new-vector (make-vector size)))
+;;     (do ((i 0 (+ i 1))
+;;          (pair list (cdr pair)))
+;;         ((= i size) new-vector)
+;;       (vector-set! new-vector i (car pair)))))
 
 ; (vector->list vector)
 ; Returns a newly allocated proper list from a vector
