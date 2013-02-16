@@ -7,9 +7,10 @@ require_relative 'syntax_rule'
 
 module Revo
   class Macro
-    attr_accessor :keywords, :name, :rules, :hygienic
+    attr_accessor :keywords, :name, :rules, :hygienic, :lexical_scope
 
-    def initialize(name, keywords, hygienic = false)
+    def initialize(scope, name, keywords, hygienic = false)
+      @lexical_scope = scope
       @name = name
       @keywords = keywords
       @rules = []
@@ -21,7 +22,7 @@ module Revo
     end
 
     def call(scope, args)
-      expansion = expand(scope, args)
+      expansion = expand(@lexical_scope, args)
       return Revo.eval(expansion, scope) if expansion
       raise 'Syntax error!'
     end

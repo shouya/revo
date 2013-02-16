@@ -24,8 +24,9 @@ module Revo
     class << self
       def construct(scope, expr)
         if expr.is_a? Symbol
-          #          return new(scope, expr) if scope.defined? expr.val
-          return expr
+#          return new(scope, expr) if scope.defined? expr.val
+          return new(scope, expr)
+#          return expr
         elsif expr.is_a? Cons and not expr.null?
           return new(scope, expr)
         else

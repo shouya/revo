@@ -77,7 +77,7 @@ syntax('define-syntax') do |name, rules|
   keywords = rules.cdr.car
   assert(keywords.all? {|x| x.is_a? Symbol })
   keywords = keywords.map(&:val)
-  macro = Macro.new(name.val, keywords, runtime.options[:hygienic_macro])
+  macro = Macro.new(env, name.val, keywords, runtime.options[:hygienic_macro])
   rules.cdr.cdr.each do |rule|
     assert(rule.car.is_a? Cons)    # pattern
     assert(rule.car.car == name)
@@ -105,7 +105,7 @@ define(:error) do |message|
 end
 
 define(:eqv?) do |op1, op2|
-  ((op1.is_a? Character or op1.is_a? Symbol) and (op1 == op2)) or
+  ((op1.is_a? Revo::Character or op1.is_a? Revo::Symbol) and (op1 == op2)) or
     op1.equal?(op2)
 end
 define_alias(:eq?, :eqv?)
@@ -356,7 +356,7 @@ end
 # Returns a new vector of the given size, filled with the given filler value
 # (this defaults to the NULL list)
 define('make-vector') do |size, fill|
-  fill = Cons::NULL if fill.nil?
+  fill = NULL if fill.nil?
   Vector.new(size, fill)
 end
 
@@ -374,7 +374,7 @@ end
 
 # Sets the kth element of a vector to object
 define('vector-set!') do |vector, k, object|
-  size = vector.siz
+  size = vector.size
   raise "Cannot modify index #{k} of vector of length #{size}" if k >= size
   vector[k] = object
 end
@@ -386,5 +386,20 @@ end
 # Calls a function using a list for the arguments
 # TODO take multiple argument values instead of a single list
 define('apply') do |function, list|
-  function.apply(list.to_a)
+  function.apply(env, list.to_a)
+end
+
+
+# -------------------- debugging features ------------------
+define('debug-scope') do |val|
+  require 'ap'
+  tmp = env
+  while tmp
+    puts "---------scope: #{tmp.object_id}---------"
+    ap tmp.symbols unless tmp.symbols.length > 30
+    tmp = tmp.parent
+  end
+  puts '--------end-of-scope--------'
+
+  val
 end

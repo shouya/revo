@@ -67,11 +67,20 @@ module Revo
       @name = name
     end
     def expand(hash, scope, macro)
-      value = hash[@name]
-      if value.is_a? EllipsisMatch
-        raise "Error to apply an ellipsis value on a direct variable #{@name}"
+      if hash.include? @name
+        value = hash[@name]
+        if value.is_a? EllipsisMatch
+          raise "Error to apply an ellipsis value on a direct variable #{@name}"
+        end
+        value
+      else
+        la_nomo = Symbol.new(@name)
+        if macro.hygienic
+          DynamicClosure.construct(macro.lexical_scope, la_nomo)
+        else
+          la_nomo
+        end
       end
-      macro.hygienic ? DynamicClosure.construct(scope, value) : value
     end
     def inspect
       "<:#@name>"
@@ -89,10 +98,10 @@ module Revo
 
     def expand(hash, scope, macro)
       result = []
-      nova_hash = hash.dup
       ellipsis_vars = names
       count = ellipsis_vars.length == 0 ? 0 : hash[ellipsis_vars[0]].length
       count.times do |i|
+        nova_hash = hash.dup
         ellipsis_vars.each do |var|
           nova_hash[var] = hash[var][i]
         end

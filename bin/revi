@@ -1,0 +1,90 @@
+#!/usr/bin/env ruby
+#
+# Revi(verb) == Revo interactive
+#
+
+
+require 'readline'
+require_relative '../lib/revo'
+
+CONFIG_FILES = ['/etc/revi', "#{ENV['HOME']}/.revirc"]
+
+@runtime = Revo::Runtime.new
+@user_scope = @runtime.user_scope
+
+def load_config(env)
+  CONFIG_FILES.each do |conf_file|
+    next unless File.readable?(conf_file)
+    Revo.eval(Revo::Parser.parse(File.read(conf_file)), env)
+  end
+end
+
+def get_prompt(env)
+  begin
+    case prompt = env.lookup('revi-prompt')
+    when String
+      prompt.val.to_s
+    when Revo::Closure
+      prompt.call(env).val.to_s
+    end
+  rescue
+    'revi> '
+  end
+end
+
+def backtrace
+  if @user_scope.defined?('revi-backtrace')
+    return Revo.is_true?(@user_scope['revi-backtrace'])
+  end
+  false
+end
+
+def completion(text)
+  @runtime.top_level.symbols.keys.grep(/^#{Regexp.escape(text)}/) |
+    @user_scope.symbols.keys.grep(/^#{Regexp.escape(text)}/)
+end
+
+Readline.completion_proc = method(:completion).to_proc
+Readline.completion_append_character = ' '
+
+def repl(env)
+  begin
+    while line = Readline.readline(get_prompt(env), true)
+      return nil if line.nil?
+      (Readline::HISTORY.pop; next) if line =~ /^\s*$/
+      Readline::HISTORY.pop if Readline::HISTORY.to_a[-2] == line
+
+      if %w(quit exit).include? line
+        puts 'Use (exit) or Ctrl-D (i.e. EOF) to exit'
+      end
+
+      begin
+        lisp = Revo::Parser.parse(line)
+        next if lisp.is_a? Revo::Cons and lisp.null?
+        val = Revo.eval(lisp, env)
+        env['_'] = val           # \['_']/
+      rescue Revo::ParseError
+        puts $!.message
+        puts $!.context
+      rescue RuntimeError, StandardError
+        puts 'There is an error in your code, please check and try again.'
+        puts "Message:\t#{$!.message}"
+        if backtrace?(env)
+          puts "Call stack:\n\t#{$!.backtrace[0..-4] * "\n\t"}"
+        end
+      else
+        puts "=> #{val.to_s}"
+      end
+    end
+  rescue Interrupt
+    puts
+    retry
+  end
+end
+
+def main
+  load_config(@user_scope)
+  repl(@user_scope)
+end
+
+main if __FILE__ == $0

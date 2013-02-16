@@ -99,10 +99,8 @@ module Revo
         end
         seq_mt
 
-      elsif template.is_a? Symbol and (@variables.include? template.val or
-                                       @ellipsis_vars.include? template.val)
+      elsif template.is_a? Symbol
         SymbolTemplate.new(template.val)
-
       else
         ConstantTemplate.new(template)
       end
@@ -110,7 +108,12 @@ module Revo
     end
 
     def match(args)
-      @pattern.match(args, {})
+      result = @pattern.match(args, {})
+      return nil if result.nil?
+      @ellipsis_vars.each do |x|
+        result[x] = EllipsisMatch.new unless result.include? x
+      end
+      result
     end
 
     def expand(match_result, scope)

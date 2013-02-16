@@ -11,7 +11,7 @@ module Revo
     attr_accessor :top_level, :user_scope
 
     extend Forwardable
-    def_delegators :@user_scope, :define, :syntax, :eval, :[]
+    def_delegators :@user_scope, :define, :syntax, :eval, :exec, :[]
 
 #    BUILTIN_LIBRARIES = %w[primitives.rb]
     BUILTIN_LIBRARIES = %w[primitives.rb syntax.rv stdlib.rv]

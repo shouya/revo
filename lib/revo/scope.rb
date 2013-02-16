@@ -58,6 +58,7 @@ module Revo
     def eval(expr)
       Revo.eval(expr, self)
     end
+    alias_method :exec, :eval
 
   end
 end

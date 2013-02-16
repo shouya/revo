@@ -76,7 +76,7 @@ module Revo
       @const = const
     end
 
-    def match(expr, hash, _)
+    def match(expr, hash)
       expr == @const ? hash : nil
     end
 
@@ -91,7 +91,7 @@ module Revo
       @keyword = keyword
     end
 
-    def match(expr, hash, _)
+    def match(expr, hash)
       (expr.is_a? Symbol) && (expr.val == @keyword) ? hash : nil
     end
 
@@ -101,7 +101,7 @@ module Revo
   end
 
   class WhateverExprMatcher < Matcher
-    def match(expr, hash, _)
+    def match(expr, hash)
       hash
     end
     def inspect
