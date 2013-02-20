@@ -32,7 +32,7 @@ def get_prompt(env)
   end
 end
 
-def backtrace
+def backtrace?
   if @user_scope.defined?('revi-backtrace')
     return Revo.is_true?(@user_scope['revi-backtrace'])
   end
@@ -69,7 +69,7 @@ def repl(env)
       rescue RuntimeError, StandardError
         puts 'There is an error in your code, please check and try again.'
         puts "Message:\t#{$!.message}"
-        if backtrace?(env)
+        if backtrace?
           puts "Call stack:\n\t#{$!.backtrace[0..-4] * "\n\t"}"
         end
       else

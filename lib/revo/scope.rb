@@ -43,7 +43,8 @@ module Revo
       self[name.to_s] = PrimitiveMacro.new(name, &block)
     end
     def define_alias(new_name, reference)
-      raise "#{reference.to_s} doesn't exist!" unless find_scope(reference.to_s)
+      raise "#{reference.to_s} doesn't exist!" unless
+        find_scope(reference.to_s)
       self[new_name.to_s] = self[reference.to_s]
     end
 
