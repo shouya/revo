@@ -19,6 +19,7 @@ syntax(:define) do |name, *other|
     closure = call(:lambda, param, *other)
     env[name.to_s] = closure
   elsif name.is_a? Symbol
+    puts name
     env[name.to_s] = Revo.eval(other[0], env)
   else
     raise 'Unknown operation for "define"'

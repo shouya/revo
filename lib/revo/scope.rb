@@ -3,6 +3,7 @@
 require_relative 'callable/primitive_procedure'
 require_relative 'callable/primitive_macro'
 require_relative 'callable/closure'
+require_relative 'callable/currying'
 require_relative 'callable/macro'
 
 module Revo

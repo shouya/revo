@@ -1,18 +1,24 @@
 #
 
+require_relative 'currying'
+
 module Revo
   class Closure
+    include Currying
+
     attr_accessor :lexical_scope, :params, :body
     def initialize(lexical_scope, params, body)
       @lexical_scope = lexical_scope
       @params = params
       @body = body
+      @arity = calculate_arity(params)
     end
 
     def call(runtime_scope, args)
-      scope = Scope.new(@lexical_scope)
       args = args.map {|arg| Revo.eval(arg, runtime_scope) }
+      return curry(args) if curry?(args)
 
+      scope = Scope.new(@lexical_scope)
       apply(scope, args)
     end
 
