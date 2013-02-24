@@ -416,3 +416,13 @@ define('curry') do |val, *force_arity|
 
   val.force_curry(arity)
 end
+
+syntax('delay') do |expr|
+  Promise.new(expr, env)
+end
+define('force') do |promise|
+  promise.force
+end
+define('promise?') do |obj|
+  obj.is_a? Promise
+end

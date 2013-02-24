@@ -5,6 +5,7 @@ require_relative 'callable/primitive_macro'
 require_relative 'callable/closure'
 require_relative 'callable/currying'
 require_relative 'callable/macro'
+require_relative 'data/promise'
 
 module Revo
   class Scope
