@@ -13,12 +13,12 @@ module Revo
     end
 
     def call(env, args)
-      if curry?(args)
-        curry(args)
-      else
-        args = @args + args.to_a
-        @proc.call(env, Cons.construct(args))
-      end
+      return curry(args.map {|x| Revo.eval(x, env) }) if curry?(args)
+      apply(env, args.to_a.map {|x| Revo.eval(x, env) })
+    end
+
+    def apply(env, args)
+      @proc.apply(env, @args + args)
     end
 
   end

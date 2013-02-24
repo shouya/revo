@@ -7,6 +7,8 @@ module Revo
 
     def calculate_arity(params)
       return -1 unless params.is_a? Cons
+      return 0 if params == NULL
+
       prm = []
       tail = params.each {|x| prm << x }
 
@@ -50,6 +52,8 @@ module Revo
     def force_curry(arity)
       raise 'Invalid arity' if arity <= 0
       raise 'Invalid arity' unless arity_compatible?(arity)
+
+      require_relative 'curry'
       Revo::Curry.new(self, [], arity)
     end
   end

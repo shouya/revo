@@ -19,7 +19,6 @@ syntax(:define) do |name, *other|
     closure = call(:lambda, param, *other)
     env[name.to_s] = closure
   elsif name.is_a? Symbol
-    puts name
     env[name.to_s] = Revo.eval(other[0], env)
   else
     raise 'Unknown operation for "define"'
@@ -407,4 +406,13 @@ define('debug-scope') do |val|
   puts '--------end-of-scope--------'
 
   val
+end
+
+# ------- currying --------
+define('curry') do |val, *force_arity|
+  arity = nil
+  arity = force_arity.first if force_arity.length > 0
+  arity ||= val.arity
+
+  val.force_curry(arity)
 end
