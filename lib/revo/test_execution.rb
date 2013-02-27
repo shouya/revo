@@ -9,9 +9,9 @@ rt = Runtime.new
 ap rt.eval(Parser.parse(DATA.read))
 
 __END__
-(define (plus . rest)
-  (apply + rest))
-(define plus-curry
-  (curry plus 3))
-(plus 3 5)
-((plus-curry 1 2) 4)
+(display "hello\x2aworld")
+(newline)
+(display "hello\046world")
+(newline)
+(display "hello\tworld\nhello\rhell world")
+(newline)

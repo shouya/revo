@@ -132,16 +132,17 @@ module Revo
       when 'n' then "\n"
       when 't' then "\t"
       when 'r' then "\r"
+      when "\\" then "\\"
       else "\\#{str}"
       end
     end
 
     def string_octalnumber(str)
-      str[1..-1].to_i(8).chr
+      str.to_i(8).chr
     end
 
     def string_hexnumber(str)
-      str[2..-1].to_i(16).chr
+      str.to_i(16).chr
     end
   end
 end

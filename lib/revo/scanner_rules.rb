@@ -33,11 +33,11 @@ module Revo
     symbol_rule('\"', :DSTR) { @buffer[:str] << '"'; :PASS }
     symbol_rule('"',  :DSTR) { @state = nil; [:STRING, @buffer.delete(:str)] }
     rule(/\\[\\ntr]/, :DSTR) { @buffer[:str] << string_unescape(@match);:PASS }
-    rule(/\\0\d+/, :DSTR)    {
-      @buffer[:str] << string_octalnumber(@match); :PASS
+    rule(/\\x\h{1,2}/, :DSTR){
+      @buffer[:str] << string_hexnumber(@match[2..-1]); :PASS
     }
-    rule(/\\0[xX]\h+/, :DSTR){
-      @buffer[:str] << string_hexnumber(@match); :PASS
+    rule(/\\0[0-7]{0,2}/, :DSTR)    {
+      @buffer[:str] << string_octalnumber(@match[2..-1]); :PASS
     }
     rule(/./, :DSTR)         { @buffer[:str] << @match; :PASS }
 
