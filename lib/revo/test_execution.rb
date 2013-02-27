@@ -9,7 +9,6 @@ rt = Runtime.new
 ap rt.eval(Parser.parse(DATA.read))
 
 __END__
-
 (define (plus . rest)
   (apply + rest))
 (define plus-curry
