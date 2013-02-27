@@ -9,17 +9,9 @@ rt = Runtime.new
 ap rt.eval(Parser.parse(DATA.read))
 
 __END__
-(define laz (delay (+ 1 2)))
-;Value: laz
-
-laz
-;Value 11: #[promise 11]
-
-(promise? laz)
-;Value: #t
-
-(force laz)
-;Value: 3
-
-(* 10 (force laz))
-;Value: 30
+(define (plus . rest)
+  (apply + rest))
+(define plus-curry
+  (curry plus 3))
+(plus 3 5)
+((plus-curry 1 2) 4)
