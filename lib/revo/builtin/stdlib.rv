@@ -81,6 +81,12 @@
 (define (even? x)
   (zero? (remainder x 2)))
 
+
+; (square x)
+; Returns square of a number
+(define (square x)
+  (* x x))
+
 ; (max arg1 arg2 ...)
 ; Returns the maximum value in the list of arguments
 (define (max . values)
