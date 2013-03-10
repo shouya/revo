@@ -4,6 +4,7 @@ require_relative 'currying'
 
 module Revo
   class Closure
+    LAMBDA_UNICODE = "\xce\xbb".force_encoding('utf-8')
     include Currying
 
     attr_accessor :lexical_scope, :params, :body
@@ -43,6 +44,13 @@ module Revo
     def inspect
       "#<Closure:#{object_id} binding:##{@lexical_scope.object_id}" \
       " param:#{@params.inspect} body:#{@body.inspect}>"
+    end
+
+    def to_s
+      param_str = @params.is_a?(Symbol) ? @params.to_s :
+        @params.map(&:to_s).join(' ')
+      body_str = @body.to_s
+      "#{LAMBDA_UNICODE}#{param_str}.#{body_str}"
     end
   end
 end
