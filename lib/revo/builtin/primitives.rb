@@ -139,15 +139,15 @@ define('<=') do |*args|
 end
 
 define('complex?') do |value|
-  Complex === value || call('real?', value)
+  Complex === value || call('real?', quote(value))
 end
 
 define('real?') do |value|
-  Float === value || call('rational?', value)
+  Float === value || call('rational?', quote(value))
 end
 
 define('rational?') do |value|
-  Rational === value || call('integer?', value)
+  Rational === value || call('integer?', quote(value))
 end
 
 define('integer?') do |value|
@@ -163,7 +163,7 @@ define('string?') do |value|
 end
 
 define('symbol?') do |value|
-  Symbol === value or Identifier === value
+  Revo::Symbol === value
 end
 
 define('procedure?') do |value|
