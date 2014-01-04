@@ -8,15 +8,29 @@ on purpose to implement it in Ruby.
 Revo is mostly compatible with r5rs, while beside it may have some
 extensions.
 
+## Requirements
+You need to have the following environment in order to setup revo.
+
+- Linux or Windows, most versions should be acceptable
+- Ruby 1.9+
+- Bundler (`$ gem install bundler`)
+
+For Debian/Ubuntu users: to build racc native extension you probably need to install 'ruby-dev' package.
+
+## Installation
+
+    $ bundle install
+    $ rake compile
+
 ## Usage
 Revo provides an interactive command line interface, you can run it
 directly with:
 
-    $ revi
+    $ bundle exec bin/revi
 
 If you have a revo source file and want it to be interpreted, knock:
 
-    $ revo <your-source-file.revo>
+    $ bundle exec bin/revo <your-source-file.revo>
 
 ## License
 The MIT License (MIT)
