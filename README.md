@@ -8,6 +8,8 @@ on purpose to implement it in Ruby.
 Revo is mostly compatible with r5rs, while beside it may have some
 extensions.
 
+Demo: http://asciinema.org/a/1938
+
 ## Requirements
 You need to have the following environment in order to setup revo.
 
