@@ -47,9 +47,9 @@ module Revo
     def to_s
       return '()' if self == NULL
       items = []
-      tail = each { |x| items << x.inspect }
+      tail = each { |x| items << x.to_s }
       unless tail.cdr == NULL
-        items << '.' << tail.cdr.inspect
+        items << '.' << tail.cdr.to_s
       end
       "(#{items.join(' ')})"
     end

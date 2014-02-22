@@ -13,7 +13,7 @@ module Revo
     extend Forwardable
     def_delegators :@user_scope, :define, :syntax, :eval, :exec, :[]
 
-#    BUILTIN_LIBRARIES = %w[primitives.rb]
+#    BUILTIN_LIBRARIES = %w[primitives.rb] # Safe mode
     BUILTIN_LIBRARIES = %w[primitives.rb syntax.rv stdlib.rv]
     BUILTIN_LIBRARIES_PATH = File.expand_path('../builtin', __FILE__)
 
